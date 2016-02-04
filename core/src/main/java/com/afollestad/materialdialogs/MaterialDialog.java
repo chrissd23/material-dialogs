@@ -1578,17 +1578,28 @@ public class MaterialDialog extends DialogBase implements
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (mProgressLabel != null) {
-//                    final int percentage = (int) (((float) getCurrentProgress() / (float) getMaxProgress()) * 100f);
-                    mProgressLabel.setText(mBuilder.progressPercentFormat.format(
-                            (float) getCurrentProgress() / (float) getMaxProgress()));
-                }
-                if (mProgressMinMax != null) {
-                    mProgressMinMax.setText(String.format(mBuilder.progressNumberFormat,
-                            getCurrentProgress(), getMaxProgress()));
-                }
+                updateUI();
             }
         });
+    }
+
+    public void setProgressOnMainThread(final int progress) {
+        if (mBuilder.progress <= -2)
+            throw new IllegalStateException("Cannot use setProgress() on this dialog.");
+        mProgress.setProgress(progress);
+        updateUI();
+    }
+
+    private void updateUI() {
+        if (mProgressLabel != null) {
+//                    final int percentage = (int) (((float) getCurrentProgress() / (float) getMaxProgress()) * 100f);
+            mProgressLabel.setText(mBuilder.progressPercentFormat.format(
+                    (float) getCurrentProgress() / (float) getMaxProgress()));
+        }
+        if (mProgressMinMax != null) {
+            mProgressMinMax.setText(String.format(mBuilder.progressNumberFormat,
+                    getCurrentProgress(), getMaxProgress()));
+        }
     }
 
     public final void setMaxProgress(final int max) {
